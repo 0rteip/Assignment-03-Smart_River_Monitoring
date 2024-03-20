@@ -32,56 +32,19 @@ void DisplayLcdI2C::clear()
     this->lcd->clear();
 }
 
-void DisplayLcdI2C::scroll()
-{
-    if (this->needScroll)
-    {
-        this->lcd->scrollDisplayLeft();
-    }
-}
-
-void DisplayLcdI2C::display(char string[])
+void DisplayLcdI2C::display(String message)
 {
     this->clear();
-    this->lcd->print(string);
-    // Check id string is longer than 16 chars
-    this->needScroll = strlen(string) > LCD_LENGHT;
+    this->lcd->print(message);
+    this->message = message;
 }
 
 void DisplayLcdI2C::updateProgress(int progress)
 {
-    this->clear();
-    this->needScroll = false;
-    this->lcd->setCursor(0, 0);
-    this->lcd->print("Progress: ");
+    // this->clear();
+    // this->display(this->message);
+    this->lcd->setCursor(0, 1);
+    this->lcd->print("Opening: ");
     this->lcd->print(progress);
-    this->lcd->print("%");
-
-    this->updateProgressBar(progress, 100, 1);
-}
-
-void DisplayLcdI2C::updateProgressBar(unsigned long progress, unsigned long totalCount, int lineToPrintOn)
-{
-    double factor = totalCount / 80.0;
-    int percent = (progress + 1) / factor;
-    int number = percent / 5;
-    int remainder = percent % 5;
-    if (number > 0)
-    {
-        for (int j = 0; j < number; j++)
-        {
-            this->lcd->setCursor(j, lineToPrintOn);
-            this->lcd->write(5);
-        }
-    }
-    this->lcd->setCursor(number, lineToPrintOn);
-    this->lcd->write(remainder);
-    if (number < 16) // If using a 20 character display, this should be 20!
-    {
-        for (int j = number + 1; j <= 16; j++) // If using a 20 character display, this should be 20!
-        {
-            this->lcd->setCursor(j, lineToPrintOn);
-            this->lcd->write(0);
-        }
-    }
+    this->lcd->print("%  ");
 }

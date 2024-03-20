@@ -13,15 +13,15 @@ public:
     void on();
     void off();
     void clear();
-    void scroll();
-    void display(char string[]);
+    void display(String message);
     void updateProgress(int progress);
 
 private:
     void updateProgressBar(unsigned long progress, unsigned long totalCount, int lineToPrintOn);
 
     LiquidCrystal_I2C *lcd;
-    bool needScroll;
+
+    String message;
     byte zero[8] = {
         B00000,
         B00000,
