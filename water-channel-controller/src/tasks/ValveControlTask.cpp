@@ -10,29 +10,23 @@ ValveControlTask::ValveControlTask(UserConsole *userConsole, WaterChannel *water
 
 void ValveControlTask::tick()
 {
-    if (this->waterChannel->isManualMode())
+
+    unsigned long now = millis();
+
+    this->waterChannel->readValveKnob();
+
+    if (this->userConsole->getKnobValue() != this->lastKnobValue)
     {
-        unsigned long now = millis();
-
-        this->waterChannel->readValveKnob();
-
-        if (this->userConsole->getKnobValue() != this->lastKnobValue)
-        {
-            this->lastValveChange = now;
-            this->lastKnobValue = this->userConsole->getKnobValue();
-            return;
-        }
-
-        if (now - this->lastValveChange > VALVE_STABLE_TIME &&
-            this->waterChannel->getValveOpening() != this->lastKnobValue)
-        {
-            this->lastValveChange = now;
-            this->lastKnobValue = this->userConsole->getKnobValue();
-            this->waterChannel->updateValveOpening();
-        }
+        this->lastValveChange = now;
+        this->lastKnobValue = this->userConsole->getKnobValue();
+        return;
     }
-    else
+
+    if (now - this->lastValveChange > VALVE_STABLE_TIME &&
+        this->waterChannel->getValveOpening() != this->lastKnobValue)
     {
-        this->setActive(false);
+        this->lastValveChange = now;
+        this->lastKnobValue = this->userConsole->getKnobValue();
+        this->waterChannel->updateValveOpening();
     }
 }

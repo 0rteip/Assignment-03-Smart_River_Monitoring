@@ -25,12 +25,15 @@ public:
   void displayModeDescription(String description);
 
   void displayValveOpening();
+  void updateValveOpening(int value);
 
   void sendModeMessage(bool mode);
   void sendValveMessage(int percentage);
 
   bool isButtonPressed();
   int getKnobValue();
+
+  int newValveValue();
 
 private:
   Button *button;

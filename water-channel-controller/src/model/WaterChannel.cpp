@@ -70,9 +70,15 @@ void WaterChannel::updateValveOpening()
     this->userConsole->sendValveMessage(potValue);
 }
 
+void WaterChannel::setValveOpening(int value)
+{
+    this->userConsole->updateValveOpening(value);
+    this->valve->setOpening(value);
+}
+
 void WaterChannel::changeMode(Mode mode)
 {
     this->mode = mode;
     this->userConsole->displayModeDescription(this->getModeDescription());
-    this->userConsole->sendModeMessage(this->isAutomaticMode());
+    this->userConsole->sendModeMessage(mode);
 }

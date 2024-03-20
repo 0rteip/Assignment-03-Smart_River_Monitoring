@@ -19,4 +19,15 @@ void ControlTask::tick()
         this->userConsole->displayValveOpening();
         this->valveControlTask->setActive(this->waterChannel->isManualMode());
     }
+
+    if (this->waterChannel->isAutomaticMode())
+    {
+        int valveValue = this->userConsole->newValveValue();
+        if (valveValue != -1)
+        {
+            this->waterChannel->setValveOpening(valveValue);
+            // this->waterChannel->updateValveOpening();
+            // this->userConsole->displayValveOpening();
+        }
+    }
 }

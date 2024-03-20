@@ -24,6 +24,7 @@ public:
 
     void readValveKnob();
     void updateValveOpening();
+    void setValveOpening(int value);
 
 private:
     void changeMode(Mode mode);

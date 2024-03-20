@@ -53,6 +53,11 @@ void UserConsole::displayValveOpening()
   this->lcd->updateProgress(this->potentiometer->getPotValue());
 }
 
+void UserConsole::updateValveOpening(int value)
+{
+  this->lcd->updateProgress(value);
+}
+
 void UserConsole::sendValveMessage(int percentage)
 {
   MsgService.sendMsg(VALVE_PREFIX + percentage);
@@ -63,11 +68,17 @@ void UserConsole::sendModeMessage(bool mode)
   MsgService.sendMsg(MODE_PREFIX + mode);
 }
 
-// bool UserConsole::isTemperatureFixed()
-// {
-//   if (MsgService.isMsgAvailable() && MsgService.receiveMsg()->getContent().equals(TEMP_FIXED_MESSAGE))
-//   {
-//     return true;
-//   }
-//   return false;
-// }
+int UserConsole::newValveValue()
+{
+  if (MsgService.isMsgAvailable())
+  {
+    String message = MsgService.receiveMsg()->getContent();
+    int prefixIndex = message.indexOf(VALVE_PREFIX);
+    if (prefixIndex != -1)
+    {
+      String valueString = message.substring(prefixIndex + VALVE_PREFIX.length());
+      return valueString.toInt();
+    }
+  }
+  return -1;
+}

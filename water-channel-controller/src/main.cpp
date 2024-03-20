@@ -22,7 +22,7 @@ void setup()
   valveControlTask->setActive(false);
 
   ControlTask *controlTask = new ControlTask(userConsole, waterChannel, valveControlTask);
-  controlTask->init(100);
+  controlTask->init(125);
   // controlTask->setActive(false);
 
   sched->addTask(controlTask);
