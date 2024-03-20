@@ -1,18 +1,37 @@
 #include <Arduino.h>
+#include "kernel/Scheduler.h"
+#include "model/WaterChannel.h"
+#include "tasks/ControlTask.h"
+#include "tasks/ValveControlTask.h"
+#include "UserConsole.h"
 
-// put function declarations here:
-int myFunction(int, int);
+Scheduler *sched;
+WaterChannel *waterChannel;
+UserConsole *userConsole;
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup()
+{
+  sched = new Scheduler();
+  sched->init(25);
+
+  userConsole = new UserConsole();
+  waterChannel = new WaterChannel(userConsole);
+
+  ValveControlTask *valveControlTask = new ValveControlTask(userConsole, waterChannel);
+  valveControlTask->init(200);
+  valveControlTask->setActive(false);
+
+  ControlTask *controlTask = new ControlTask(userConsole, waterChannel, valveControlTask);
+  controlTask->init(100);
+  // controlTask->setActive(false);
+
+  sched->addTask(controlTask);
+  sched->addTask(valveControlTask);
+
+  Serial.begin(115200);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void loop()
+{
+  sched->schedule();
 }
