@@ -11,3 +11,13 @@ npm install serialport
 
 node arduino.js
 ```
+
+To run server.js
+
+```bash
+npm install mqtt ws
+
+node server.js
+```
+
+
