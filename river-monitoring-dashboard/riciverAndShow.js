@@ -1,4 +1,7 @@
 const ws = new WebSocket('ws://localhost:8080');
+const messagesDiv = document.getElementById('messages');
+const modeP = document.getElementById('mode');
+const openingP = document.getElementById('opening');
 
 // Callback chiamata quando la connessione WebSocket viene stabilita
 ws.onopen = function () {
@@ -8,9 +11,17 @@ ws.onopen = function () {
 // Callback chiamata quando il client riceve un messaggio WebSocket dal server
 ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
-    console.log('Messaggio ricevuto:', data.message);
     // Qui puoi fare qualsiasi cosa tu voglia con i dati ricevuti, ad esempio aggiornare l'interfaccia utente
-    aggiornaInterfacciaUtente(data.message);
+    if (data.topic === 'river-level') {
+        aggiornaInterfacciaUtente(data.message);
+    } else if (data.topic === 'opening') {
+        modeP.innerHTML = data.message;
+    } else if (data.topic === 'alarm_state') {
+        openingP.innerHTML = data.message;
+    }
+    else {
+        console.log('Messaggio non gestito', data);
+    }
 };
 
 // Callback chiamata quando la connessione WebSocket viene chiusa
@@ -21,6 +32,7 @@ ws.onclose = function () {
 function aggiornaInterfacciaUtente(message) {
     // Qui puoi aggiornare l'interfaccia utente con i dati ricevuti
     // Ad esempio, puoi visualizzare i dati in un elemento HTML
-    const messagesDiv = document.getElementById('messages');
-    messagesDiv.innerHTML += '<p>' + message + '</p>';
+    const l = document.createElement('li');
+    l.innerHTML = message
+    messagesDiv.appendChild(l);
 }
