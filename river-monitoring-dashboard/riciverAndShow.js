@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>MQTT Web Client</title>
-</head>
-<body>
-    <div id="messages"></div>
-    <script>
-        const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket('ws://localhost:8080');
 
         // Callback chiamata quando la connessione WebSocket viene stabilita
         ws.onopen = function () {
@@ -32,6 +24,3 @@
             const messagesDiv = document.getElementById('messages');
             messagesDiv.innerHTML += '<p>' + message + '</p>';
         }
-    </script>
-</body>
-</html>
