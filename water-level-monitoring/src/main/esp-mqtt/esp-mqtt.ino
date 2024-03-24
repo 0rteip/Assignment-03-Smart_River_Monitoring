@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
 #define MSG_BUFFER_SIZE  50
@@ -16,8 +17,8 @@ const float temperature = 20;
 const float vs = 331.45 + 0.62*temperature;
 /* wifi network info */
 
-const char* ssid = "luca";
-const char* password = "lucaluca";
+const char* ssid = "Wifu";
+const char* password = "tangente";
 
 /* MQTT server address */
 const char* mqtt_server = "broker.mqtt-dashboard.com";
@@ -27,6 +28,7 @@ const char* riverLevelTopic = "river-level";
 
 const char* frequencyTopic = "frequency";
 
+int frequency = 2000;
 /* MQTT client management */
 
 WiFiClient espClient;
@@ -62,13 +64,13 @@ void setup_wifi() {
 /* MQTT subscribing callback */
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Messaggio ricevuto su topic [");
-  Serial.print(topic);
-  Serial.print("]: ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+  String mess = "";
+  if (String(topic) == String(frequencyTopic)) {
+    for (int i = 0; i < length; i++) {
+      mess += (char)payload[i];
+    }
+    frequency = mess.toInt();
   }
-  Serial.println();
 }
 
 float getDistance()
@@ -141,18 +143,15 @@ void loop() {
   client.loop();
   
   unsigned long now = millis();
-  if (now - lastMsgTime > 5000) {
+  if (now - lastMsgTime > frequency) {
     lastMsgTime = now;
     /* creating a msg in the buffer */
     snprintf (msg, MSG_BUFFER_SIZE, "%lf", getDistance());
 
-    Serial.println(String("Publishing message: ") + msg);
+    //Serial.println(String("Publishing message: ") + msg);
     
     /* publishing the msg */
 
     client.publish(riverLevelTopic, msg);
-    delay(1000);
-    Serial.println(String("Publishing message: ") + "ciao");
-    client.publish(frequencyTopic, "ciaoo");
   }
 }
