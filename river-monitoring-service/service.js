@@ -28,11 +28,11 @@ const Frequecy = Object.freeze({
 })
 
 const AlarmState = Object.freeze({
-    ALARM_TOO_LOW: { valveOpening: 0, frequecy: Frequecy.F1 },
-    NORMAL: { valveOpening: 25, frequecy: Frequecy.F1 },
-    PRE_ALARM_TOO_HIGH: { valveOpening: 25, frequecy: Frequecy.F2 },
-    ALARM_TOO_HIGH: { valveOpening: 50, frequecy: Frequecy.F2 },
-    ALARM_TOO_HIGH_CRITIC: { valveOpening: 100, frequecy: Frequecy.F2 },
+    ALARM_TOO_LOW: { description: "Alarm too low", valveOpening: 0, frequecy: Frequecy.F1 },
+    NORMAL: { description: "Normal", valveOpening: 25, frequecy: Frequecy.F1 },
+    PRE_ALARM_TOO_HIGH: { description: "Pre alarm too high", valveOpening: 25, frequecy: Frequecy.F2 },
+    ALARM_TOO_HIGH: { description: "Alarm too high", valveOpening: 50, frequecy: Frequecy.F2 },
+    ALARM_TOO_HIGH_CRITIC: { description: "Alarm too high critic", valveOpening: 100, frequecy: Frequecy.F2 },
 })
 
 const WaterLevel = Object.freeze({
@@ -59,6 +59,14 @@ function sendFrequency(frequency) {
     mqttClient.publish("frequency", frequency.toString());
 }
 
+function sendWsData(topic, message) {
+    wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ topic: topic, message: message.toString() }));
+        }
+    });
+}
+
 function parseData(data) {
     if (data.startsWith(valve_prefix)) {
         const valve = data.slice(valve_prefix.length)
@@ -81,11 +89,16 @@ function parseData(data) {
 
 function sendMode(mode) {
     if (currentAlarmState !== mode) {
-        sendMessage(valve_prefix + mode.valveOpening + "\n")
-        sendFrequency(mode.frequecy)
-        sendWsData('alarm_state', currentAlarmState)
-        sendWsData('opening', mode.valveOpening)
         currentAlarmState = mode
+        sendMessage(valve_prefix + currentAlarmState.valveOpening + "\n")
+        sendFrequency(currentAlarmState.frequecy)
+        sendWsData('current_state', JSON.encode(
+            {
+                description: currentAlarmState.description,
+                valveOpening: currentAlarmState.valveOpening
+            }))
+        // sendWsData('alarm_state', currentAlarmState.description)
+        // sendWsData('opening', currentAlarmState.valveOpening)
     }
 }
 
@@ -101,14 +114,6 @@ function checkLevel(level) {
     } else if (level < WaterLevel.WL4) {
         sendMode(AlarmState.ALARM_TOO_HIGH_CRITIC)
     }
-}
-
-function sendWsData(topic, message) {
-    wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ topic: topic, message: message.toString() }));
-        }
-    });
 }
 
 // const parser = port.pipe(new ByteLengthParser({ length: 1 }))
