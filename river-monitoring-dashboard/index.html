@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>MQTT Web Client</title>
+    <title>River Monitoring Dashboard</title>
 </head>
 
 <body>
-    <h1>MQTT Web Client</h1>
+    <h1>River Monitoring Dashboard</h1>
 
-    <p id="mode"></p>
-    <p id="opening"></p>
+    <p>State: <strong id="state"></strong></p>
+    <p>Valve opening: <strong id="opening"></strong>%</p>
+
+    <label for="openingInput" hidden>Valve Opening:</label>
+    <input type="number" id="openingInput" value="0" min="0" max="100" step="1" />
+    <button id="valveButton">Set valve opening</button>
+
     <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
 
-    <!-- <ul id="messages"></ul> -->
     <script src="riciverAndShow.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </body>

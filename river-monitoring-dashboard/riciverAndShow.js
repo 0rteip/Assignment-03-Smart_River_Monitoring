@@ -1,39 +1,16 @@
 const ws = new WebSocket('ws://localhost:8080');
-// const messagesDiv = document.getElementById('messages');
-const modeP = document.getElementById('mode');
+const modeP = document.getElementById('state');
 const openingP = document.getElementById('opening');
-
-// Callback chiamata quando la connessione WebSocket viene stabilita
-ws.onopen = function () {
-    console.log('Connessione WebSocket stabilita');
-};
-
-// Callback chiamata quando il client riceve un messaggio WebSocket dal server
-ws.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    // Qui puoi fare qualsiasi cosa tu voglia con i dati ricevuti, ad esempio aggiornare l'interfaccia utente
-    if (data.topic === 'river-level') {
-        aggiornaInterfacciaUtente(data.message);
-    } else if (data.topic === 'current_state') {
-        modeP.innerHTML = data.description;
-        openingP.innerHTML = data.valveOpening;
-    } else {
-        console.log('Messaggio non gestito', data);
-    }
-};
+const valveButton = document.getElementById('valveButton');
+const valveInput = document.getElementById('openingInput');
 
 const xValues = [];
 const yValues = [];
 const maxElements = 10;
 
-function aggiornaInterfacciaUtente(message) {
-    // const l = document.createElement('li');
-    // l.innerHTML = message
-    // messagesDiv.appendChild(l);
-
-
-    xValues.push(Date.now());
-    yValues.push(parseFloat(message));
+function updateChart(newValue) {
+    xValues.push(new Date().toLocaleString());
+    yValues.push(parseFloat(newValue));
 
     if (xValues.length > maxElements) {
         xValues.shift();
@@ -56,7 +33,34 @@ function aggiornaInterfacciaUtente(message) {
     });
 }
 
-// Callback chiamata quando la connessione WebSocket viene chiusa
+ws.onopen = function () {
+    console.log('Connessione WebSocket stabilita');
+};
+
+ws.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+
+    if (data.topic === 'river-level') {
+        updateChart(data.message);
+    } else if (data.topic === 'description') {
+        modeP.innerHTML = data.message;
+    } else if (data.topic === 'valve-opening') {
+        openingP.innerHTML = data.message;
+    } else {
+        console.log('Messaggio non gestito', data);
+    }
+};
+
 ws.onclose = function () {
     console.log('Connessione WebSocket chiusa');
 };
+
+valveButton.onclick = function () {
+    const opening = parseFloat(valveInput.value);
+    if (opening >= 0 && opening <= 100) {
+        ws.send(JSON.stringify({ topic: 'valve-opening', message: opening }));
+
+    } else {
+        alert('Inserire un valore compreso tra 0 e 100');
+    }
+}

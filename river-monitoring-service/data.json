@@ -1,0 +1,48 @@
+{
+  "Modality": {
+    "AUTO": 0,
+    "MANUAL": 1
+  },
+  "Frequecy": {
+    "F1": 5000,
+    "F2": 1000
+  },
+  "AlarmState": {
+    "ALARM_TOO_LOW": {
+      "description": "Alarm too low",
+      "valveOpening": 0,
+      "frequecy": 5000
+    },
+    "NORMAL": {
+      "description": "Normal",
+      "valveOpening": 25,
+      "frequecy": 5000
+    },
+    "PRE_ALARM_TOO_HIGH": {
+      "description": "Pre alarm too high",
+      "valveOpening": 25,
+      "frequecy": 1000
+    },
+    "ALARM_TOO_HIGH": {
+      "description": "Alarm too high",
+      "valveOpening": 50,
+      "frequecy": 1000
+    },
+    "ALARM_TOO_HIGH_CRITIC": {
+      "description": "Alarm too high critic",
+      "valveOpening": 100,
+      "frequecy": 1000
+    }
+  },
+  "WaterLevel": {
+    "WL1": 0.14,
+    "WL2": 0.1,
+    "WL3": 0.08,
+    "WL4": 0.04
+  },
+  "valve_prefix": "vl:",
+  "mode_prefix": "md:",
+  "path": "/dev/ttyACM0",
+  "baudRate": 115200,
+  "wssPort": 8080
+}
