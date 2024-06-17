@@ -17,8 +17,8 @@ const float temperature = 20;
 const float vs = 331.45 + 0.62 * temperature;
 /* wifi network info */
 
-const char* ssid = "Wifu";
-const char* password = "tangente";
+const char *ssid = "luca";
+const char *password = "lucaluca";
 
 /* MQTT server address */
 const char *mqtt_server = "broker.mqtt-dashboard.com";
@@ -64,10 +64,13 @@ void setup_wifi()
 
 /* MQTT subscribing callback */
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char *topic, byte *payload, unsigned int length)
+{
   String mess = "";
-  if (String(topic) == String(frequencyTopic)) {
-    for (int i = 0; i < length; i++) {
+  if (String(topic) == String(frequencyTopic))
+  {
+    for (int i = 0; i < length; i++)
+    {
       mess += (char)payload[i];
     }
     frequency = mess.toInt();
@@ -153,13 +156,14 @@ void loop()
   client.loop();
 
   unsigned long now = millis();
-  if (now - lastMsgTime > frequency) {
+  if (now - lastMsgTime > frequency)
+  {
     lastMsgTime = now;
     /* creating a msg in the buffer */
     snprintf(msg, MSG_BUFFER_SIZE, "%lf", getDistance());
 
-    //Serial.println(String("Publishing message: ") + msg);
-    
+    // Serial.println(String("Publishing message: ") + msg);
+
     /* publishing the msg */
 
     client.publish(riverLevelTopic, msg);

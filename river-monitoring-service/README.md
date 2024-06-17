@@ -1,4 +1,4 @@
-To run `aruino.js` you must have node and npm installed. Then you can run the following commands to install the required packages and run the program.
+To run `arduino.js` you must have node and npm installed. Then you can run the following commands to install the required packages and run the program.
 
 ```bash
 # on arch

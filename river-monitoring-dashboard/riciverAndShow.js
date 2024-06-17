@@ -39,6 +39,7 @@ ws.onopen = function () {
 
 ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
+    console.log('Messaggio ricevuto', data);
 
     if (data.topic === 'river-level') {
         updateChart(data.message);
